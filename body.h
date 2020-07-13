@@ -1,3 +1,6 @@
+#ifndef BODY_H
+#define BODY_H
+
 #include <SFML/Graphics.hpp>
 #include "force.h"
 
@@ -18,3 +21,5 @@ public:
     void moveTo(double, double);
     sf::Vector2f getAcceleration();
 };
+
+#endif

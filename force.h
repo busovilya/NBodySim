@@ -1,3 +1,6 @@
+#ifndef FORCE_H
+#define FORCE_H
+
 #include "SFML/Graphics.hpp"
 
 class Force
@@ -10,3 +13,5 @@ public:
     const Force& operator+(const Force&);
     const Force& operator-(const Force&);
 };
+
+#endif

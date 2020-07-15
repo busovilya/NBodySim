@@ -1,5 +1,6 @@
 #include <cmath>
 #include "simulation.h"
+#include "math.h"
 
 Simulation::Simulation()
 {
@@ -14,7 +15,7 @@ Simulation::Simulation()
     
     planets.push_back(planet1);
     planets.push_back(planet2);
-    planets.push_back(planet3);
+    // planets.push_back(planet3);
 };
 
 void Simulation::addPlanet(const Body& body)
@@ -27,12 +28,12 @@ std::vector<Body> Simulation::getPlanets()
     return planets;
 };
 
-bool Simulation::isCollided(Body body1, Body body2)
+bool Simulation::isCollided(Body& body1, Body& body2)
 {
     return body1.getRadius() + body2.getRadius() >= getDistance(body1, body2);
 };
 
 double Simulation::getDistance(Body body1, Body body2)
 {
-    return sqrt(pow(body1.getX() - body2.getX(), 2) + pow(body1.getY() - body2.getY(), 2));
+    return distance(body1.getPosition(), body2.getPosition());
 };

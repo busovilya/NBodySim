@@ -4,12 +4,13 @@
 #include <iostream>
 #include "body.h"
 #include "simulation.h"
+#include "math.h"
 
 sf::CircleShape getBodyShape(Body body)
 {
     sf::CircleShape shape(body.getRadius());
-    shape.setFillColor(sf::Color::Red);
-    shape.move(sf::Vector2f(body.getX(), body.getY()));
+    shape.setFillColor(sf::Color::Blue);
+    shape.move(sf::Vector2f(body.getPosition().x - body.getRadius(), body.getPosition().y - body.getRadius()));
     return shape;
 }
 
@@ -20,8 +21,8 @@ int main()
 
     Simulation simualtion;
     std::vector<Body> planets = simualtion.getPlanets();
-    planets[1].force(new Force(sf::Vector2f(5, -10)));
-    planets[2].force(new Force(sf::Vector2f(0, -100)));
+    planets[1].force(new Force(sf::Vector2f(5, -7)));
+    planets[2].force(new Force(sf::Vector2f(0, -50)));
 
     while (window.isOpen())
     {        
@@ -50,16 +51,30 @@ int main()
             {
                 if(i != j)
                 {
-                    double distance = sqrt(pow(planets[i].getX() - planets[j].getX(), 2) + pow(planets[i].getY() - planets[j].getY(), 2));
-                    double forceValue = 0.00001 * planets[i].getMass() * planets[j].getMass() / pow(distance, 2);
-                    double xForce = forceValue * (planets[j].getX() - planets[i].getX()) / distance;
-                    double yForce = forceValue * (planets[j].getY() - planets[i].getY()) / distance;
+                    sf::Vector2f body1Position = planets[i].getPosition();
+                    sf::Vector2f body2Position = planets[j].getPosition();
+                    float dist = distance(body1Position, body2Position);
+                    double forceValue = 0.00001 * planets[i].getMass() * planets[j].getMass() / pow(dist, 2);
+                    double xForce = forceValue * (body2Position.x - body1Position.x) / dist;
+                    double yForce = forceValue * (body2Position.y - body1Position.y) / dist;
                     Force force(sf::Vector2f(xForce, yForce));
                     totalForce = totalForce + force;
+
+                    if(simualtion.isCollided(planets[i], planets[j]))
+                    {
+                        planets[i].setSpeed(sf::Vector2f(0, 0));
+                        planets[j].setSpeed(sf::Vector2f(0, 0));
+                        break;
+                    }
                 }
             }
-            
 
+            sf::Vector2f unitAccel = planets[i].getAcceleration() / norm(planets[i].getAcceleration());
+            sf::Vertex line[] = {
+                planets[i].getPosition(),
+                planets[i].getPosition() + unitAccel * 10.0f
+            };
+            window.draw(line, 2, sf::Lines);
             planets[i].force(&totalForce);
             planets[i].move();
             window.draw(getBodyShape(planets[i]));

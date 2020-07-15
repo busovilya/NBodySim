@@ -4,8 +4,7 @@ Body::Body(double mass, double radius)
 {
     this->mass = mass;
     this->radius = radius;
-    x = 100;
-    y = 100;
+    position = sf::Vector2f(0, 0);
 };
 
 double Body::getMass()
@@ -18,15 +17,10 @@ double Body::getRadius()
     return radius;
 };
 
-int Body::getX()
+const sf::Vector2f& Body::getPosition()
 {
-    return x;
-};
-
-int Body::getY()
-{
-    return y;
-};
+    return position;
+}
 
 sf::Vector2f Body::getAcceleration()
 {
@@ -43,13 +37,19 @@ void Body::force(Force* force)
 
 void Body::move()
 {
-    x += speed.x;
-    y += speed.y;
+    position.x += speed.x;
+    position.y += speed.y;
 }
 
 
 void Body::moveTo(double x, double y)
 {
-    this->x = x;
-    this->y = y;
+    position.x = x;
+    position.y = y;
+}
+
+
+void Body::setSpeed(sf::Vector2f vector)
+{
+    speed = vector;
 }

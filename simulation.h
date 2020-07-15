@@ -13,7 +13,7 @@ public:
     Simulation();
     void addPlanet(const Body&);
     std::vector<Body> getPlanets();
-    bool isCollided(Body, Body);
+    bool isCollided(Body&, Body&);
 };
 
 #endif

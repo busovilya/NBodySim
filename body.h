@@ -8,18 +8,18 @@ class Body
 {
 private:
     double mass, radius;
-    double x, y;
+    sf::Vector2f position;
     sf::Vector2f speed, acceleration;
 public:
     Body(double, double);
     double getMass();
     double getRadius();
-    int getX();
-    int getY();
+    const sf::Vector2f& getPosition();
     void force(Force*);
     void move();
     void moveTo(double, double);
     sf::Vector2f getAcceleration();
+    void setSpeed(sf::Vector2f);
 };
 
 #endif

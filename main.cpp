@@ -5,6 +5,7 @@
 #include "body.h"
 #include "simulation.h"
 #include "math.h"
+#include "button.h"
 
 sf::CircleShape getBodyShape(Body body)
 {
@@ -12,6 +13,14 @@ sf::CircleShape getBodyShape(Body body)
     shape.setFillColor(sf::Color::Blue);
     shape.move(sf::Vector2f(body.getPosition().x - body.getRadius(), body.getPosition().y - body.getRadius()));
     return shape;
+}
+
+void initFont(sf::Font* font)
+{
+    if(!font->loadFromFile("./res/fonts/Ubuntu-B.ttf"))
+    {
+        std::cout << "Can't load fonts!" << std::endl;
+    }
 }
 
 int main()
@@ -24,6 +33,14 @@ int main()
     planets[1].force(new Force(sf::Vector2f(5, -7)));
     planets[2].force(new Force(sf::Vector2f(0, -50)));
 
+    sf::Font font;
+    initFont(&font);
+
+    sf::Text text;
+    text.setString("Button");
+    text.setFillColor(sf::Color::Black);
+    Button buttons[] = {Button(550, 10, 80, 50, text, &font, sf::Color::White, sf::Color::Red)};
+
     while (window.isOpen())
     {        
         sf::Event event;
@@ -33,13 +50,13 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
                 window.close();
-            if(event.type == sf::Event::MouseButtonPressed)
-            {
-                Body planet(100, 10);
-                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                planet.moveTo(mousePosition.x, mousePosition.y);
-                planets.push_back(planet);
-            }
+            // if(event.type == sf::Event::MouseButtonPressed)
+            // {
+            //     Body planet(100, 10);
+            //     sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+            //     planet.moveTo(mousePosition.x, mousePosition.y);
+            //     planets.push_back(planet);
+            // }
         }
 
         window.clear();
@@ -78,6 +95,12 @@ int main()
             planets[i].force(&totalForce);
             planets[i].move();
             window.draw(getBodyShape(planets[i]));
+
+        }
+        for(int i = 0; i < 1; i++)
+        {
+            buttons[i].update(sf::Mouse::getPosition(window));
+            buttons[i].render(&window);
         }
         window.display();
     }

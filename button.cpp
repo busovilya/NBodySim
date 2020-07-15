@@ -18,6 +18,7 @@ Button::Button(int x, int y, int width, int height, sf::Text text, sf::Font* fon
     this->pressedColor = pressedColor;
 
     state = ButtonStates::IDLE_BTN; 
+    rect.setFillColor(idleColor);
 };
 
 void Button::render(sf::RenderTarget* target)

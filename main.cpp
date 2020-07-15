@@ -30,16 +30,23 @@ int main()
 
     Simulation simualtion;
     std::vector<Body> planets = simualtion.getPlanets();
-    planets[1].force(new Force(sf::Vector2f(5, -7)));
-    planets[2].force(new Force(sf::Vector2f(0, -50)));
+    planets[1].force(new Force(sf::Vector2f(5, -1)));
+    // planets[1].force(new Force(sf::Vector2f(25, 0)));
+    // planets[2].force(new Force(sf::Vector2f(0, -50)));
 
     sf::Font font;
     initFont(&font);
 
     sf::Text text;
-    text.setString("Button");
+    text.setString("Add planet");
     text.setFillColor(sf::Color::Black);
-    Button buttons[] = {Button(550, 10, 80, 50, text, &font, sf::Color::White, sf::Color::Red)};
+    Button buttons[] = {Button(550, 10, 80, 50, text, &font, sf::Color::Blue, sf::Color::Cyan)};
+
+    sf::RectangleShape rightPanel;
+    int rightPanelWidth = 100;
+    rightPanel.setFillColor(sf::Color::White);
+    rightPanel.setPosition(sf::Vector2f(window.getSize().x - rightPanelWidth, 0));
+    rightPanel.setSize(sf::Vector2f(rightPanelWidth, window.getSize().y));
 
     while (window.isOpen())
     {        
@@ -60,6 +67,7 @@ int main()
         }
 
         window.clear();
+        window.draw(rightPanel);
 
         for(int i = 0; i < planets.size(); i++)
         {
@@ -68,19 +76,12 @@ int main()
             {
                 if(i != j)
                 {
-                    sf::Vector2f body1Position = planets[i].getPosition();
-                    sf::Vector2f body2Position = planets[j].getPosition();
-                    float dist = distance(body1Position, body2Position);
-                    double forceValue = 0.00001 * planets[i].getMass() * planets[j].getMass() / pow(dist, 2);
-                    double xForce = forceValue * (body2Position.x - body1Position.x) / dist;
-                    double yForce = forceValue * (body2Position.y - body1Position.y) / dist;
-                    Force force(sf::Vector2f(xForce, yForce));
+                    Force force = *simualtion.calcGravity(planets[i], planets[j]);
                     totalForce = totalForce + force;
 
                     if(simualtion.isCollided(planets[i], planets[j]))
                     {
-                        planets[i].setSpeed(sf::Vector2f(0, 0));
-                        planets[j].setSpeed(sf::Vector2f(0, 0));
+                        simualtion.processColision(planets[i], planets[j]);
                         break;
                     }
                 }
@@ -94,7 +95,10 @@ int main()
             window.draw(line, 2, sf::Lines);
             planets[i].force(&totalForce);
             planets[i].move();
-            window.draw(getBodyShape(planets[i]));
+
+            if(!rightPanel.getGlobalBounds().contains(planets[i].getPosition().x,
+                                                      planets[i].getPosition().y))
+                window.draw(getBodyShape(planets[i]));
 
         }
         for(int i = 0; i < 1; i++)

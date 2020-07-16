@@ -38,7 +38,7 @@ double Simulation::getDistance(Body& body1, Body& body2)
     return distance(body1.getPosition(), body2.getPosition());
 };
 
-Force* Simulation::calcGravity(Body& body1, Body& body2)
+Force Simulation::calcGravity(Body& body1, Body& body2)
 {
     sf::Vector2f body1Position = body1.getPosition();
     sf::Vector2f body2Position = body2.getPosition();
@@ -46,7 +46,7 @@ Force* Simulation::calcGravity(Body& body1, Body& body2)
     double forceValue = GRAVITY_CONSTANT * body1.getMass() * body2.getMass() / pow(dist, 2);
     double xForce = forceValue * (body2Position.x - body1Position.x) / dist;
     double yForce = forceValue * (body2Position.y - body1Position.y) / dist;
-    Force* force = new Force(sf::Vector2f(xForce, yForce));
+    Force force(sf::Vector2f(xForce, yForce));
     return force;
 }
 

@@ -15,7 +15,7 @@ public:
     void addPlanet(const Body&);
     std::vector<Body> getPlanets();
     bool isCollided(Body&, Body&);
-    Force* calcGravity(Body&, Body&);
+    Force calcGravity(Body&, Body&);
     void processColision(Body&, Body&);
 };
 

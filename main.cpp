@@ -25,14 +25,13 @@ void initFont(sf::Font* font)
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(640, 480), "GravitySim");
+    sf::RenderWindow window(sf::VideoMode(640, 480), "UniverseSim");
     sf::Keyboard keyboard;
 
     Simulation simualtion;
     std::vector<Body> planets = simualtion.getPlanets();
-    planets[1].force(new Force(sf::Vector2f(5, -1)));
+    planets[1].force(new Force(sf::Vector2f(5, -10)));
     // planets[1].force(new Force(sf::Vector2f(25, 0)));
-    // planets[2].force(new Force(sf::Vector2f(0, -50)));
 
     sf::Font font;
     initFont(&font);
@@ -76,7 +75,7 @@ int main()
             {
                 if(i != j)
                 {
-                    Force force = *simualtion.calcGravity(planets[i], planets[j]);
+                    Force force = simualtion.calcGravity(planets[i], planets[j]);
                     totalForce = totalForce + force;
 
                     if(simualtion.isCollided(planets[i], planets[j]))

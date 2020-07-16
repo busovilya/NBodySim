@@ -6,6 +6,7 @@
 #include "simulation.h"
 #include "math.h"
 #include "button.h"
+#include "text_panel.h"
 
 sf::CircleShape getBodyShape(Body body)
 {
@@ -46,6 +47,8 @@ int main()
     rightPanel.setFillColor(sf::Color::White);
     rightPanel.setPosition(sf::Vector2f(window.getSize().x - rightPanelWidth, 0));
     rightPanel.setSize(sf::Vector2f(rightPanelWidth, window.getSize().y));
+
+    TextPanel textPanel(sf::Vector2f(550, 80), sf::Vector2f(80, 30), "Radius: ", &font, 12, TextHorizontalAlign::LEFT);
 
     while (window.isOpen())
     {        
@@ -105,6 +108,8 @@ int main()
             buttons[i].update(sf::Mouse::getPosition(window));
             buttons[i].render(&window);
         }
+
+        textPanel.render(&window);
         window.display();
     }
 

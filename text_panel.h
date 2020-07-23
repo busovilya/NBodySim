@@ -13,9 +13,8 @@ private:
     sf::Text text;
     sf::Font* font;
 public:
-    TextPanel(sf::Vector2f position, sf::Vector2f size, char* text, sf::Font* font, int characterSize, TextHorizontalAlign align=TextHorizontalAlign::LEFT);
-    void setText(char* text);
-    void update();
+    TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font* font, int characterSize, TextHorizontalAlign align=TextHorizontalAlign::LEFT);
+    void update(std::string text);
     void render(sf::RenderTarget*);
 };
 

@@ -1,15 +1,16 @@
 #include "button.h"
 #include <iostream>
 
-Button::Button(int x, int y, int width, int height, sf::Text text, sf::Font* font, sf::Color idleColor, sf::Color pressedColor)
+Button::Button(int x, int y, int width, int height, std::string text, sf::Font* font, sf::Color idleColor, sf::Color pressedColor)
 {
     rect.setPosition(x, y);
     rect.setSize(sf::Vector2f(width, height));
 
-    this->text = text;
+    this->text.setString(text);
     this->font = font;
 
     this->text.setFont(*font);
+    this->text.setFillColor(sf::Color::Black);
     this->text.setCharacterSize(14);
     this->text.setPosition(rect.getPosition().x + rect.getGlobalBounds().width / 2 - this->text.getGlobalBounds().width / 2,
                            rect.getPosition().y + rect.getGlobalBounds().height / 2 - this->text.getGlobalBounds().height / 2);

@@ -18,7 +18,7 @@ private:
     sf::Color idleColor;
     sf::Color pressedColor;
 public:
-    Button(int, int, int, int, sf::Text, sf::Font*, sf::Color, sf::Color);
+    Button(int, int, int, int, std::string, sf::Font*, sf::Color, sf::Color);
     ~Button();
     void render(sf::RenderTarget*);
     void update(sf::Vector2i);

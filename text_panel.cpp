@@ -1,7 +1,7 @@
 #include "text_panel.h"
 
 
-TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, char* text, sf::Font* font, int characterSize, TextHorizontalAlign align)
+TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font* font, int characterSize, TextHorizontalAlign align)
 {
     shape.setPosition(position);
     shape.setSize(size);
@@ -23,7 +23,7 @@ TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, char* text, sf::F
     this->text.setFillColor(sf::Color::Black);
 }
 
-void TextPanel::setText(char* text)
+void TextPanel::update(std::string text)
 {
     this->text.setString(text);
 }

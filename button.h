@@ -22,6 +22,7 @@ public:
     ~Button();
     void render(sf::RenderTarget*);
     void update(sf::Vector2i);
+    sf::IntRect getRect();
 };
 
 #endif

@@ -10,7 +10,9 @@ Body::Body(double mass, double radius)
 
     shape.setFillColor(sf::Color::Blue);
     shape.setRadius(radius);
-    shape.setPosition(sf::Vector2f(getPosition().x - getRadius(), getPosition().y - getRadius()));
+    moveTo(position);
+
+    interaction = true;
 };
 
 sf::CircleShape* Body::getShape()
@@ -52,11 +54,16 @@ void Body::move()
 }
 
 
-void Body::moveTo(double x, double y)
+void Body::moveTo(float x, float y)
 {
     position.x = x;
     position.y = y;
     shape.setPosition(position.x - getRadius(), position.y - getRadius());
+}
+
+void Body::moveTo(sf::Vector2f position)
+{
+    moveTo(position.x, position.y);
 }
 
 
@@ -85,4 +92,19 @@ bool Body::isCollided(Body& body)
 void Body::render(sf::RenderTarget* target)
 {
     target->draw(shape);
+}
+
+void Body::interactionOn()
+{
+    interaction = true;
+}
+
+void Body::interactionOff()
+{
+    interaction = false;
+}
+
+bool Body::getInteraction()
+{
+    return interaction;
 }

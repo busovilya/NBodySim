@@ -12,6 +12,7 @@ private:
     sf::Vector2f position;
     sf::Vector2f speed, acceleration;
     sf::CircleShape shape;
+    bool interaction;
 public:
     Body(double, double);
     sf::CircleShape* getShape();
@@ -20,12 +21,16 @@ public:
     const sf::Vector2f& getPosition();
     void force(Force*);
     void move();
-    void moveTo(double, double);
+    void moveTo(float x, float y);
+    void moveTo(sf::Vector2f position);
     sf::Vector2f getAcceleration();
     void setSpeed(sf::Vector2f);
     Force calcGravity(Body&);
     bool isCollided(Body&);
     void render(sf::RenderTarget*);
+    void interactionOn();
+    void interactionOff();
+    bool getInteraction();
 };
 
 #endif

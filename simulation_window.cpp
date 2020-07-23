@@ -24,13 +24,64 @@ SimulationWindow::SimulationWindow(sf::RenderWindow* target)
     widgetsPanel.setFillColor(sf::Color::White);
     widgetsPanel.setPosition(sf::Vector2f(window->getSize().x - widgetsPanelWidth, 0));
     widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window->getSize().y));
+    
+    state = DEFAULT;
+}
 
+void SimulationWindow::runSimulation()
+{
+    while (window->isOpen())
+    {        
+        sf::Event event;
+        while (window->pollEvent(event))
+        {
+            // TODO: Segmentation fault while window closing 
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
+                window->close();
+
+            if(event.type == sf::Event::MouseButtonPressed)
+            {
+                if(event.mouseButton.button == sf::Mouse::Button::Left)
+                {
+                    if(state == DEFAULT)
+                    {
+                        if(buttons[0]->getRect().contains(sf::Mouse::getPosition(*window)))
+                        {
+                            state = ADD_PLANET;
+                            Body* newPlanet = new Body(100, 20);
+                            newPlanet->moveTo(sf::Vector2f(sf::Mouse::getPosition(*window)));
+                            newPlanet->interactionOff();
+                            selectedBody = newPlanet;
+                            simulation.addPlanet(*newPlanet);
+                        }
+                    }
+                    else if(state == ADD_PLANET)
+                    {
+                        selectedBody->interactionOn();
+                        selectedBody = nullptr;
+                        state = DEFAULT;
+                    }
+                    
+                }
+            }
+        }
+
+        window->clear();
+
+        update(sf::Mouse::getPosition(*window));
+        render(window);
+        
+        window->display();
+    }
 }
 
 void SimulationWindow::update(sf::Vector2i mousePosition)
 {
     std::vector<Body>& planets = simulation.getPlanets(); 
-    selectedBody = nullptr;
+    if(state != ADD_PLANET)
+        selectedBody = nullptr;
 
     for(int i = 0; i < planets.size(); i++)
     {
@@ -39,6 +90,8 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
         {
             if(i != j)
             {
+                if(!planets[i].getInteraction() || !planets[j].getInteraction())
+                    continue;
                 Force force = planets[i].calcGravity(planets[j]);
                 totalForce = totalForce + force;
 
@@ -49,8 +102,7 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
                 }
             }
         }
-
-        // std::cout << sf::Mouse::getPosition(*window).x << ' ' << sf::Mouse::getPosition(*window).y << std::endl;
+      
         if(planets[i].getShape()->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
         {
             selectedBody = &planets[i];
@@ -66,6 +118,11 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
     {
         textPanels[0]->update("Radius: " + std::to_string(int(selectedBody->getRadius())));
         textPanels[1]->update("Mass: " + std::to_string(int(selectedBody->getMass())));
+
+        if(state == ADD_PLANET)
+        {
+            selectedBody->moveTo(sf::Vector2f(mousePosition));
+        }
     }
     else
         for(TextPanel* textPanel: textPanels)

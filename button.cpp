@@ -55,6 +55,12 @@ void Button::update(sf::Vector2i mousePosition)
     }
 };
 
+sf::IntRect Button::getRect()
+{
+    return sf::IntRect(rect.getPosition().x, rect.getPosition().y,
+                       rect.getSize().x, rect.getSize().y);
+}
+
 Button::~Button()
 {
 };

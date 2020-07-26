@@ -11,8 +11,7 @@
 
 int main()
 { 
-    sf::RenderWindow window(sf::VideoMode(640, 480), "UniverseSim");
-    SimulationWindow simualtion(&window);
+    SimulationWindow simualtion;
     simualtion.runSimulation();
     return 0;
 }

@@ -13,7 +13,7 @@ class SimulationWindow
 {
 private:
     Simulation simulation;
-    sf::RenderWindow* window;
+    sf::RenderWindow window;
     std::vector<Button*> buttons;
     std::vector<TextPanel*> textPanels;
     sf::RectangleShape widgetsPanel;
@@ -21,10 +21,10 @@ private:
     void initFont(sf::Font* font);
     SimulationWindowState state;
 public:
-    SimulationWindow(sf::RenderWindow* target);
+    SimulationWindow();
     void runSimulation();
     void update(sf::Vector2i mousePosition);
-    void render(sf::RenderTarget* target);
+    void render();
 };
 
 #endif

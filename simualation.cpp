@@ -13,7 +13,7 @@ Simulation::Simulation()
     Body planet3(2000, 10);
     planet3.moveTo(350, 350);
     
-    // planets.push_back(planet1);
+    planets.push_back(planet1);
     planets.push_back(planet2);
     // planets.push_back(planet3);
 

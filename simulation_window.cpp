@@ -5,9 +5,9 @@
 #include <vector>
 #include <iostream>
 
-SimulationWindow::SimulationWindow(sf::RenderWindow* target)
+SimulationWindow::SimulationWindow()
 {
-    window = target;
+    window.create(sf::VideoMode(640, 480), "UniverseSim");
 
     sf::Font* font = new sf::Font();
     initFont(font);
@@ -22,24 +22,24 @@ SimulationWindow::SimulationWindow(sf::RenderWindow* target)
 
     int widgetsPanelWidth = 100;
     widgetsPanel.setFillColor(sf::Color::White);
-    widgetsPanel.setPosition(sf::Vector2f(window->getSize().x - widgetsPanelWidth, 0));
-    widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window->getSize().y));
+    widgetsPanel.setPosition(sf::Vector2f(window.getSize().x - widgetsPanelWidth, 0));
+    widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window.getSize().y));
     
     state = DEFAULT;
 }
 
 void SimulationWindow::runSimulation()
 {
-    while (window->isOpen())
+    while (window.isOpen())
     {        
         sf::Event event;
-        while (window->pollEvent(event))
+        while (window.pollEvent(event))
         {
             // TODO: Segmentation fault while window closing 
             if (event.type == sf::Event::Closed)
-                window->close();
+                window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
-                window->close();
+                window.close();
 
             if(event.type == sf::Event::MouseButtonPressed)
             {
@@ -47,11 +47,11 @@ void SimulationWindow::runSimulation()
                 {
                     if(state == DEFAULT)
                     {
-                        if(buttons[0]->getRect().contains(sf::Mouse::getPosition(*window)))
+                        if(buttons[0]->getRect().contains(sf::Mouse::getPosition(window)))
                         {
                             state = ADD_PLANET;
                             Body* newPlanet = new Body(100, 20);
-                            newPlanet->moveTo(sf::Vector2f(sf::Mouse::getPosition(*window)));
+                            newPlanet->moveTo(sf::Vector2f(sf::Mouse::getPosition(window)));
                             newPlanet->interactionOff();
                             selectedBody = newPlanet;
                             simulation.addPlanet(*newPlanet);
@@ -68,12 +68,12 @@ void SimulationWindow::runSimulation()
             }
         }
 
-        window->clear();
+        window.clear();
 
-        update(sf::Mouse::getPosition(*window));
-        render(window);
+        update(sf::Mouse::getPosition(window));
+        render();
         
-        window->display();
+        window.display();
     }
 }
 
@@ -103,7 +103,7 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
             }
         }
       
-        if(planets[i].getShape()->getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
+        if(planets[i].getShape()->getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
         {
             selectedBody = &planets[i];
         }
@@ -129,19 +129,19 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
             textPanel->update("");
 }
 
-void SimulationWindow::render(sf::RenderTarget* target)
+void SimulationWindow::render()
 {
-    target->draw(widgetsPanel);
+    window.draw(widgetsPanel);
 
     std::vector<Body>& planets = simulation.getPlanets(); 
     for(int i = 0; i < planets.size(); i++)
-        planets[i].render(target);
+        planets[i].render(&window);
 
     for(Button* button: buttons)
-        button->render(target);
+        button->render(&window);
 
     for(TextPanel* textPanel: textPanels)
-        textPanel->render(target);    
+        textPanel->render(&window);    
 }
 
 

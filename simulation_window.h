@@ -16,10 +16,12 @@ private:
     sf::RenderWindow window;
     std::vector<Button*> buttons;
     std::vector<TextPanel*> textPanels;
+    sf::RectangleShape spaceArea;
     sf::RectangleShape widgetsPanel;
     Body* selectedBody;
     void initFont(sf::Font* font);
     SimulationWindowState state;
+    bool intersect(const sf::RectangleShape&, const sf::CircleShape&);
 public:
     SimulationWindow();
     void runSimulation();

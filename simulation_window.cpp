@@ -2,6 +2,7 @@
 #include "body.h"
 #include "text_panel.h"
 #include "button.h"
+#include "math.h"
 #include <vector>
 #include <iostream>
 
@@ -24,6 +25,9 @@ SimulationWindow::SimulationWindow()
     widgetsPanel.setFillColor(sf::Color::White);
     widgetsPanel.setPosition(sf::Vector2f(window.getSize().x - widgetsPanelWidth, 0));
     widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window.getSize().y));
+
+    spaceArea.setPosition(0, 0);
+    spaceArea.setSize(sf::Vector2f(window.getSize().x - widgetsPanelWidth, window.getSize().y));
     
     state = DEFAULT;
 }
@@ -35,7 +39,6 @@ void SimulationWindow::runSimulation()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            // TODO: Segmentation fault while window closing 
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
@@ -59,9 +62,21 @@ void SimulationWindow::runSimulation()
                     }
                     else if(state == ADD_PLANET)
                     {
-                        selectedBody->interactionOn();
-                        selectedBody = nullptr;
-                        state = DEFAULT;
+                        bool canAddBody = true;
+                        for(Body& body: simulation.getPlanets())
+                            if(&body != selectedBody)
+                                if(selectedBody->isCollided(body))
+                                    canAddBody = false;
+                        
+                        if(!intersect(spaceArea, *selectedBody->getShape()))
+                            canAddBody = false;
+
+                        if(canAddBody)
+                        {
+                            selectedBody->interactionOn();
+                            selectedBody = nullptr;
+                            state = DEFAULT;
+                        }
                     }
                     
                 }
@@ -131,11 +146,13 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
 
 void SimulationWindow::render()
 {
+    // window.draw(spaceArea);
     window.draw(widgetsPanel);
 
     std::vector<Body>& planets = simulation.getPlanets(); 
     for(int i = 0; i < planets.size(); i++)
-        planets[i].render(&window);
+        if(intersect(spaceArea, *planets[i].getShape()))
+            planets[i].render(&window);
 
     for(Button* button: buttons)
         button->render(&window);
@@ -151,4 +168,15 @@ void SimulationWindow::initFont(sf::Font* font)
     {
         std::cout << "Can't load fonts!" << std::endl;
     }
+}
+
+void printVector(const sf::Vector2f& vector)
+{
+    std::cout << vector.x << ' ' << vector.y << std::endl; 
+}
+
+bool SimulationWindow::intersect(const sf::RectangleShape& rect, const sf::CircleShape& circle)
+{
+    return rect.getGlobalBounds().contains(circle.getPosition().x, circle.getPosition().y) && 
+           rect.getGlobalBounds().contains(circle.getPosition().x + 2 * circle.getRadius(), circle.getPosition().y + 2 * circle.getRadius());
 }

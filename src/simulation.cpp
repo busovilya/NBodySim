@@ -9,13 +9,9 @@ Simulation::Simulation()
 
     Body planet2(200, 5);
     planet2.moveTo(200, 200);
-
-    Body planet3(2000, 10);
-    planet3.moveTo(350, 350);
     
     planets.push_back(planet1);
     planets.push_back(planet2);
-    // planets.push_back(planet3);
 
     planets[1].force(new Force(sf::Vector2f(5, -10)));
 };

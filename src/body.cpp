@@ -5,7 +5,6 @@
 Body::Body(double mass, double radius)
 {
     this->mass = mass;
-    this->radius = radius;
     position = sf::Vector2f(0, 0);
 
     shape.setFillColor(sf::Color::Blue);
@@ -25,10 +24,20 @@ double Body::getMass()
     return mass;
 };
 
+void Body::setMass(float mass)
+{
+    this->mass = mass;
+}
+
 double Body::getRadius()
 {
-    return radius;
+    return shape.getRadius();
 };
+
+void Body::setRadius(float radius)
+{
+    this->shape.setRadius(radius);
+}
 
 const sf::Vector2f& Body::getPosition()
 {

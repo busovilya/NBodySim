@@ -9,6 +9,14 @@
 
 enum SimulationWindowState { DEFAULT, ADD_PLANET };
 
+struct DragAndDropData
+{
+    sf::Mouse::Button mouseButton;
+    sf::Vector2i startPosition;
+    sf::Vector2i direction;
+    bool active;
+};
+
 class SimulationWindow
 {
 private:
@@ -21,10 +29,12 @@ private:
     Body* selectedBody;
     void initFont(sf::Font* font);
     SimulationWindowState state;
+    DragAndDropData dragAndDrop;
     bool intersect(const sf::RectangleShape&, const sf::CircleShape&);
 public:
     SimulationWindow();
     void runSimulation();
+    void listenEvents();
     void update(sf::Vector2i mousePosition);
     void render();
 };

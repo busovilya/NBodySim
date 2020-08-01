@@ -15,12 +15,12 @@ SimulationWindow::SimulationWindow()
     sf::Font *font = new sf::Font();
     initFont(font);
 
-    addButton = new Button(550, 10, 80, 50, "Add planet", font, sf::Color::Blue, sf::Color::Magenta);
+    addButton = new Button(550, 10, 80, 50, "Add planet", font, sf::Color(34, 45, 201), sf::Color(34, 70, 201));
 
-    bodyInfo = new TextPanel(sf::Vector2f(540, 80), sf::Vector2f(80, 30), "", font, 12, TextHorizontalAlign::LEFT);
+    bodyInfo = new TextPanel(sf::Vector2f(540, 80), sf::Vector2f(80, 30), "", font, 12, sf::Color::White, TextHorizontalAlign::LEFT);
 
     int widgetsPanelWidth = 100;
-    widgetsPanel.setFillColor(sf::Color::White);
+    widgetsPanel.setFillColor(sf::Color(104, 34, 201));
     widgetsPanel.setPosition(sf::Vector2f(window.getSize().x - widgetsPanelWidth, 0));
     widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window.getSize().y));
 

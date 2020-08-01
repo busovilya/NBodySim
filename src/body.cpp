@@ -7,7 +7,7 @@ Body::Body(double mass, double radius, BodyState initialState)
     this->mass = mass;
     position = sf::Vector2f(0, 0);
 
-    shape.setFillColor(sf::Color::Blue);
+    shape.setFillColor(sf::Color(46, 59, 240));
     shape.setRadius(radius);
     moveTo(position);
 
@@ -101,9 +101,9 @@ bool Body::isCollided(Body& body)
 void Body::render(sf::RenderTarget* target)
 {
     if(state == NEW || state == CAPTURED)
-        shape.setFillColor(sf::Color::Red);
+        shape.setFillColor(sf::Color(66, 22, 210));    
     else
-        shape.setFillColor(sf::Color::Blue);    
+        shape.setFillColor(sf::Color(46, 59, 240));
     target->draw(shape);
 }
 

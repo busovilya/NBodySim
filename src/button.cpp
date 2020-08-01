@@ -10,7 +10,7 @@ Button::Button(int x, int y, int width, int height, std::string text, sf::Font* 
     this->font = font;
 
     this->text.setFont(*font);
-    this->text.setFillColor(sf::Color::Black);
+    this->text.setFillColor(sf::Color::White);
     this->text.setCharacterSize(14);
     this->text.setPosition(rect.getPosition().x + rect.getGlobalBounds().width / 2 - this->text.getGlobalBounds().width / 2,
                            rect.getPosition().y + rect.getGlobalBounds().height / 2 - this->text.getGlobalBounds().height / 2);

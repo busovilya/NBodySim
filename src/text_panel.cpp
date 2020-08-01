@@ -1,7 +1,7 @@
 #include "text_panel.h"
 
 
-TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font* font, int characterSize, TextHorizontalAlign align)
+TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font* font, int characterSize, sf::Color textColor, TextHorizontalAlign align)
 {
     shape.setPosition(position);
     shape.setSize(size);
@@ -9,6 +9,7 @@ TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text,
     this->text.setString(text);
     this->text.setFont(*font);
     this->text.setCharacterSize(characterSize);
+    this->text.setFillColor(textColor);
 
     if(align == LEFT)
         this->text.setPosition(shape.getPosition().x + 10,
@@ -20,7 +21,6 @@ TextPanel::TextPanel(sf::Vector2f position, sf::Vector2f size, std::string text,
         this->text.setPosition(shape.getPosition().x + shape.getGlobalBounds().width - this->text.getGlobalBounds().width - 10,
                             shape.getPosition().y + shape.getGlobalBounds().height / 2 - this->text.getGlobalBounds().height / 2);
 
-    this->text.setFillColor(sf::Color::Black);
 }
 
 void TextPanel::update(std::string text)

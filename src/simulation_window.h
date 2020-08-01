@@ -27,10 +27,13 @@ private:
     sf::RectangleShape spaceArea;
     sf::RectangleShape widgetsPanel;
     Body* selectedBody;
+    Body* capturedBody;
     void initFont(sf::Font* font);
     SimulationWindowState state;
     DragAndDropData dragAndDrop;
     bool intersect(const sf::RectangleShape&, const sf::CircleShape&);
+    void captureBody(Body*);
+    void releaseBody();
 public:
     SimulationWindow();
     void runSimulation();

@@ -2,7 +2,7 @@
 #include "math.h"
 #include "body.h"
 
-Body::Body(double mass, double radius)
+Body::Body(double mass, double radius, BodyState initialState)
 {
     this->mass = mass;
     position = sf::Vector2f(0, 0);
@@ -11,7 +11,7 @@ Body::Body(double mass, double radius)
     shape.setRadius(radius);
     moveTo(position);
 
-    interaction = true;
+    state = initialState;
 };
 
 sf::CircleShape* Body::getShape()
@@ -100,20 +100,19 @@ bool Body::isCollided(Body& body)
 
 void Body::render(sf::RenderTarget* target)
 {
+    if(state == NEW || state == CAPTURED)
+        shape.setFillColor(sf::Color::Red);
+    else
+        shape.setFillColor(sf::Color::Blue);    
     target->draw(shape);
 }
 
-void Body::interactionOn()
+void Body::setState(BodyState newState)
 {
-    interaction = true;
+    state = newState;
 }
 
-void Body::interactionOff()
+BodyState Body::getState()
 {
-    interaction = false;
-}
-
-bool Body::getInteraction()
-{
-    return interaction;
+    return state;
 }

@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "force.h"
 
+enum BodyState { NEW, CAPTURED, ACTIVE };
+
 class Body
 {
 private:
@@ -12,9 +14,9 @@ private:
     sf::Vector2f position;
     sf::Vector2f speed, acceleration;
     sf::CircleShape shape;
-    bool interaction;
+    BodyState state;
 public:
-    Body(double, double);
+    Body(double, double, BodyState initialState=NEW);
     sf::CircleShape* getShape();
     double getMass();
     double getRadius();
@@ -30,9 +32,8 @@ public:
     Force calcGravity(Body&);
     bool isCollided(Body&);
     void render(sf::RenderTarget*);
-    void interactionOn();
-    void interactionOff();
-    bool getInteraction();
+    BodyState getState();
+    void setState(BodyState newState);
 };
 
 #endif

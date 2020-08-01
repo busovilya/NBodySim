@@ -15,13 +15,9 @@ SimulationWindow::SimulationWindow()
     sf::Font *font = new sf::Font();
     initFont(font);
 
-    Button *button = new Button(550, 10, 80, 50, "Add button", font, sf::Color::Blue, sf::Color::Cyan);
-    buttons.push_back(button);
+    addButton = new Button(550, 10, 80, 50, "Add planet", font, sf::Color::Blue, sf::Color::Magenta);
 
-    TextPanel *textPanel = new TextPanel(sf::Vector2f(540, 80), sf::Vector2f(80, 30), "", font, 12, TextHorizontalAlign::LEFT);
-    textPanels.push_back(textPanel);
-    textPanel = new TextPanel(sf::Vector2f(540, 120), sf::Vector2f(80, 30), "", font, 12, TextHorizontalAlign::LEFT);
-    textPanels.push_back(textPanel);
+    bodyInfo = new TextPanel(sf::Vector2f(540, 80), sf::Vector2f(80, 30), "", font, 12, TextHorizontalAlign::LEFT);
 
     int widgetsPanelWidth = 100;
     widgetsPanel.setFillColor(sf::Color::White);
@@ -96,7 +92,7 @@ void SimulationWindow::listenEvents()
             {
                 if (state == DEFAULT)
                 {
-                    if (buttons[0]->getRect().contains(sf::Mouse::getPosition(window)))
+                    if (addButton->getRect().contains(sf::Mouse::getPosition(window)))
                     {
                         state = ADD_PLANET;
                         Body *newPlanet = new Body(100, 20);
@@ -210,17 +206,15 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
         planets[i]->move();
     }
 
-    for (Button *button : buttons)
-        button->update(mousePosition);
+    addButton->update(mousePosition);
 
     if (selectedBody != nullptr)
     {
-        textPanels[0]->update("Radius: " + std::to_string(int(selectedBody->getRadius())));
-        textPanels[1]->update("Mass: " + std::to_string(int(selectedBody->getMass())));
+        bodyInfo->update("Radius: " + std::to_string(int(selectedBody->getRadius())) + '\n' 
+                        + "Mass: " + std::to_string(int(selectedBody->getMass())));
     }
     else
-        for (TextPanel *textPanel : textPanels)
-            textPanel->update("");
+        bodyInfo->update("");
 
     if (capturedBody != nullptr)
         if (capturedBody->getState() == NEW)
@@ -238,11 +232,8 @@ void SimulationWindow::render()
         if (intersect(spaceArea, *planets[i]->getShape()))
             planets[i]->render(&window);
 
-    for (Button *button : buttons)
-        button->render(&window);
-
-    for (TextPanel *textPanel : textPanels)
-        textPanel->render(&window);
+    addButton->render(&window);
+    bodyInfo->render(&window);
 }
 
 void SimulationWindow::initFont(sf::Font *font)
@@ -277,4 +268,12 @@ void SimulationWindow::releaseBody()
         capturedBody->setState(ACTIVE);
         capturedBody = nullptr;
     }
+}
+
+SimulationWindow::~SimulationWindow()
+{
+    for(Body* body: simulation.getPlanets())
+        delete body;
+    delete addButton;
+    delete bodyInfo;
 }

@@ -22,8 +22,8 @@ class SimulationWindow
 private:
     Simulation simulation;
     sf::RenderWindow window;
-    std::vector<Button*> buttons;
-    std::vector<TextPanel*> textPanels;
+    Button* addButton;
+    TextPanel* bodyInfo;
     sf::RectangleShape spaceArea;
     sf::RectangleShape widgetsPanel;
     Body* selectedBody;
@@ -40,6 +40,7 @@ public:
     void listenEvents();
     void update(sf::Vector2i mousePosition);
     void render();
+    ~SimulationWindow();
 };
 
 #endif

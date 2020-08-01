@@ -15,6 +15,18 @@ struct DragAndDropData
     sf::Vector2i startPosition;
     sf::Vector2i direction;
     bool active;
+
+    DragAndDropData()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        startPosition = sf::Vector2i(0, 0);
+        direction = sf::Vector2i(0, 0);
+        active = false;
+    }
 };
 
 class SimulationWindow

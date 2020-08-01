@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include "simulation.h"
 #include "math.h"
 
@@ -19,6 +20,12 @@ Simulation::Simulation()
 void Simulation::addPlanet(Body* body)
 {
     planets.push_back(body);
+};
+
+void Simulation::removePlanet(Body* body)
+{
+    planets.erase(std::remove(planets.begin(), planets.end(), body), planets.end());
+    delete body;
 };
 
 std::vector<Body*>& Simulation::getPlanets()

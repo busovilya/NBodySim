@@ -57,6 +57,11 @@ void SimulationWindow::listenEvents()
             window.close();
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
         {
+            if(state == ADD_PLANET)
+            {
+                simulation.removePlanet(capturedBody);
+                state = DEFAULT;
+            }
             if (state != ADD_PLANET)
                 releaseBody();
         }
@@ -95,6 +100,7 @@ void SimulationWindow::listenEvents()
                     if (addButton->getRect().contains(sf::Mouse::getPosition(window)))
                     {
                         state = ADD_PLANET;
+                        releaseBody();
                         Body *newPlanet = new Body(100, 20);
                         newPlanet->setState(NEW);
                         capturedBody = newPlanet;
@@ -110,6 +116,10 @@ void SimulationWindow::listenEvents()
                                 break;
                             }
                     }
+
+                    if(capturedBody != nullptr)
+                        if(!capturedBody->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y) && state != ADD_PLANET)
+                            releaseBody();
                 }
             }
         }
@@ -120,7 +130,6 @@ void SimulationWindow::listenEvents()
 
             if (dragAndDrop.mouseButton == event.mouseButton.button)
             {
-                dragAndDrop.active = false;
 
                 if (capturedBody != nullptr)
                 {
@@ -129,6 +138,7 @@ void SimulationWindow::listenEvents()
                     {
                         double bodyRadius = capturedBody->getRadius();
                         double multiplier = dragAndDrop.direction.y > 0 ? 0.1 : -0.1;
+                        double x = norm(sf::Vector2f(dragAndDrop.direction));
                         capturedBody->setRadius(std::max(10., bodyRadius + multiplier * norm(sf::Vector2f(dragAndDrop.direction))));
 
                         for (Body *body : simulation.getPlanets())
@@ -167,6 +177,8 @@ void SimulationWindow::listenEvents()
                         }
                     }
                 }
+
+                dragAndDrop.reset();
             }
         }
     }

@@ -12,6 +12,7 @@ private:
 public:
     Simulation();
     void addPlanet(Body*);
+    void removePlanet(Body*);
     std::vector<Body*>& getPlanets();
     void processColision(Body&, Body&);
 };

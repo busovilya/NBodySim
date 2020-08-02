@@ -3,6 +3,7 @@
 #include "text_panel.h"
 #include "button.h"
 #include "math.h"
+#include "graphic_primitives.h"
 #include <vector>
 #include <iostream>
 #include <cmath>
@@ -239,6 +240,11 @@ void SimulationWindow::render()
     // window.draw(spaceArea);
     window.draw(widgetsPanel);
 
+    if (dragAndDrop.active && capturedBody != nullptr && dragAndDrop.mouseButton == sf::Mouse::Left)
+    {
+        Arrow arrow(sf::Vector2f(capturedBody->getPosition()), sf::Vector2f(dragAndDrop.direction) * -1.0f, sf::Color::White);
+        arrow.render(&window);
+    }
     std::vector<Body *> &planets = simulation.getPlanets();
     for (int i = 0; i < planets.size(); i++)
         if (intersect(spaceArea, *planets[i]->getShape()))

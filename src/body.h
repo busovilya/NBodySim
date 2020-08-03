@@ -9,10 +9,9 @@ enum BodyState { NEW, CAPTURED, ACTIVE };
 class Body
 {
 private:
-    const float GRAVITY_CONSTANT = 10e-6;
     double mass;
     sf::Vector2f position;
-    sf::Vector2f speed, acceleration;
+    sf::Vector2f speed;
     sf::CircleShape shape;
     BodyState state;
 public:
@@ -23,13 +22,12 @@ public:
     void setMass(float mass);
     void setRadius(float radius);
     const sf::Vector2f& getPosition();
-    void force(Force*);
+    void accelerate(sf::Vector2f acceleration);
     void move();
     void moveTo(float x, float y);
     void moveTo(sf::Vector2f position);
-    sf::Vector2f getAcceleration();
+    sf::Vector2f getSpeed();
     void setSpeed(sf::Vector2f);
-    Force calcGravity(Body&);
     bool isCollided(Body&);
     void render(sf::RenderTarget*);
     BodyState getState();

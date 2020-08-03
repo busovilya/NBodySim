@@ -34,9 +34,7 @@ class SimulationWindow
 private:
     Simulation simulation;
     sf::RenderWindow window;
-    Button* addButton;
     TextPanel* bodyInfo;
-    sf::RectangleShape spaceArea;
     sf::RectangleShape widgetsPanel;
     Body* selectedBody;
     Body* capturedBody;

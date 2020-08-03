@@ -44,17 +44,14 @@ const sf::Vector2f& Body::getPosition()
     return position;
 }
 
-sf::Vector2f Body::getAcceleration()
+sf::Vector2f Body::getSpeed()
 {
-    return acceleration;
+    return speed;
 }
 
-void Body::force(Force* force)
+void Body::accelerate(sf::Vector2f acceleration)
 {
-    acceleration.x = force->getVector().x / mass;
-    acceleration.y = force->getVector().y / mass;
-    speed.x += acceleration.x;
-    speed.y += acceleration.y;
+    speed += acceleration;
 }
 
 void Body::move()
@@ -81,17 +78,17 @@ void Body::setSpeed(sf::Vector2f vector)
     speed = vector;
 }
 
-Force Body::calcGravity(Body& body)
-{
-    sf::Vector2f body1Position = this->getPosition();
-    sf::Vector2f body2Position = body.getPosition();
-    float dist = distance(body1Position, body2Position);
-    double forceValue = GRAVITY_CONSTANT * this->getMass() * body.getMass() / pow(dist, 2);
-    double xForce = forceValue * (body2Position.x - body1Position.x) / dist;
-    double yForce = forceValue * (body2Position.y - body1Position.y) / dist;
-    Force force(sf::Vector2f(xForce, yForce));
-    return force;
-}
+// Force Body::calcGravity(Body& body)
+// {
+//     sf::Vector2f body1Position = this->getPosition();
+//     sf::Vector2f body2Position = body.getPosition();
+//     float dist = distance(body1Position, body2Position);
+//     double forceValue = GRAVITY_CONSTANT * this->getMass() * body.getMass() / pow(dist, 2);
+//     double xForce = forceValue * (body2Position.x - body1Position.x) / dist;
+//     double yForce = forceValue * (body2Position.y - body1Position.y) / dist;
+//     Force force(sf::Vector2f(xForce, yForce));
+//     return force;
+// }
 
 bool Body::isCollided(Body& body)
 {

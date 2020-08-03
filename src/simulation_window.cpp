@@ -11,22 +11,12 @@
 
 SimulationWindow::SimulationWindow()
 {
-    window.create(sf::VideoMode(640, 480), "UniverseSim");
+    window.create(sf::VideoMode(960, 680), "UniverseSim");
 
     sf::Font *font = new sf::Font();
     initFont(font);
 
-    addButton = new Button(550, 10, 80, 50, "Add planet", font, sf::Color(34, 45, 201), sf::Color(34, 70, 201));
-
-    bodyInfo = new TextPanel(sf::Vector2f(540, 80), sf::Vector2f(80, 30), "", font, 12, sf::Color::White, TextHorizontalAlign::LEFT);
-
-    int widgetsPanelWidth = 100;
-    widgetsPanel.setFillColor(sf::Color(104, 34, 201));
-    widgetsPanel.setPosition(sf::Vector2f(window.getSize().x - widgetsPanelWidth, 0));
-    widgetsPanel.setSize(sf::Vector2f(widgetsPanelWidth, window.getSize().y));
-
-    spaceArea.setPosition(0, 0);
-    spaceArea.setSize(sf::Vector2f(window.getSize().x - widgetsPanelWidth, window.getSize().y));
+    bodyInfo = new TextPanel(sf::Vector2f(window.getSize().x - 90, 10), sf::Vector2f(80, 30), "", font, 12, sf::Color::White, TextHorizontalAlign::LEFT);
 
     state = DEFAULT;
 
@@ -66,6 +56,22 @@ void SimulationWindow::listenEvents()
             if (state != ADD_PLANET)
                 releaseBody();
         }
+        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A)
+        {
+            if (state == DEFAULT)
+                {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window); 
+                    if(capturedBody == nullptr)
+                    {
+                        state = ADD_PLANET;
+                        Body *newPlanet = new Body(100, 20);
+                        newPlanet->setState(NEW);
+                        capturedBody = newPlanet;
+                        newPlanet->moveTo(sf::Vector2f(mousePosition));
+                        simulation.addPlanet(newPlanet);
+                    }
+                }
+        }
 
         if (event.type == sf::Event::MouseWheelScrolled)
         {
@@ -96,32 +102,14 @@ void SimulationWindow::listenEvents()
 
             if (event.mouseButton.button == sf::Mouse::Button::Left)
             {
-                if (state == DEFAULT)
-                {
-                    if (addButton->getRect().contains(sf::Mouse::getPosition(window)))
-                    {
-                        state = ADD_PLANET;
-                        releaseBody();
-                        Body *newPlanet = new Body(100, 20);
-                        newPlanet->setState(NEW);
-                        capturedBody = newPlanet;
-                        simulation.addPlanet(newPlanet);
-                    }
-                    else
-                    {
-                        for (Body *body : simulation.getPlanets())
-                            if (body->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-                            {
-                                releaseBody();
-                                captureBody(body);
-                                break;
-                            }
-                    }
-
-                    if(capturedBody != nullptr)
-                        if(!capturedBody->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y) && state != ADD_PLANET)
+                if(capturedBody == nullptr)
+                    for (Body *body : simulation.getPlanets())
+                        if (body->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+                        {
                             releaseBody();
-                }
+                            captureBody(body);
+                            break;
+                        }
             }
         }
 
@@ -129,9 +117,12 @@ void SimulationWindow::listenEvents()
         {
             sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
 
+            if(capturedBody != nullptr)
+                if(!capturedBody->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y) && state != ADD_PLANET)
+                    releaseBody();
+
             if (dragAndDrop.mouseButton == event.mouseButton.button)
             {
-
                 if (capturedBody != nullptr)
                 {
                     // Update body radius if mouse dragged with pressed right button
@@ -151,30 +142,19 @@ void SimulationWindow::listenEvents()
                     }
                     else if (dragAndDrop.mouseButton == sf::Mouse::Left)
                     {
-                        if (spaceArea.getGlobalBounds().contains(sf::Vector2f(mousePosition)))
+                        sf::Vector2f acceleration(sf::Vector2f(dragAndDrop.direction) * -0.1f / (float)capturedBody->getMass());
+
+                        bool canAddBody = true;
+                        for (Body *body : simulation.getPlanets())
+                            if (body != capturedBody)
+                                if (capturedBody->isCollided(*body))
+                                    canAddBody = false;
+
+                        if (canAddBody && state == ADD_PLANET)
                         {
-                            Force force(sf::Vector2f(dragAndDrop.direction) * -0.1f);
-                            capturedBody->force(&force);
-                        }
-
-                        if (state == ADD_PLANET)
-                        {
-                            if (capturedBody == nullptr)
-                                throw std::runtime_error("capturedBody can't be NULL! at line number " + std::to_string(__LINE__));
-                            bool canAddBody = true;
-                            for (Body *body : simulation.getPlanets())
-                                if (body != capturedBody)
-                                    if (capturedBody->isCollided(*body))
-                                        canAddBody = false;
-
-                            if (!intersect(spaceArea, *capturedBody->getShape()))
-                                canAddBody = false;
-
-                            if (canAddBody)
-                            {
-                                releaseBody();
-                                state = DEFAULT;
-                            }
+                            capturedBody->accelerate(acceleration);
+                            releaseBody();
+                            state = DEFAULT;
                         }
                     }
                 }
@@ -191,35 +171,14 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
     if (state != ADD_PLANET && !dragAndDrop.active)
         selectedBody = nullptr;
 
-    for (int i = 0; i < planets.size(); i++)
-    {
-        Force totalForce(sf::Vector2f(0, 0));
-        for (int j = 0; j < planets.size(); j++)
-        {
-            if (i != j)
-            {
-                if (planets[i]->getState() == NEW || planets[j]->getState() == NEW)
-                    continue;
-                Force force = planets[i]->calcGravity(*planets[j]);
-                totalForce = totalForce + force;
-
-                if (planets[i]->isCollided(*planets[j]))
-                {
-                    simulation.processColision(*planets[i], *planets[j]);
-                    break;
-                }
-            }
-        }
-
+    simulation.processSystem();
+    
+    for(int i = 0; i < planets.size(); i++)
         if (planets[i]->getShape()->getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
         {
             selectedBody = planets[i];
         }
-        planets[i]->force(&totalForce);
-        planets[i]->move();
-    }
 
-    addButton->update(mousePosition);
 
     if (selectedBody != nullptr)
     {
@@ -237,9 +196,6 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
 
 void SimulationWindow::render()
 {
-    // window.draw(spaceArea);
-    window.draw(widgetsPanel);
-
     if (dragAndDrop.active && capturedBody != nullptr && dragAndDrop.mouseButton == sf::Mouse::Left)
     {
         Arrow arrow(sf::Vector2f(capturedBody->getPosition()), sf::Vector2f(dragAndDrop.direction) * -1.0f, sf::Color::White);
@@ -247,10 +203,8 @@ void SimulationWindow::render()
     }
     std::vector<Body *> &planets = simulation.getPlanets();
     for (int i = 0; i < planets.size(); i++)
-        if (intersect(spaceArea, *planets[i]->getShape()))
-            planets[i]->render(&window);
+        planets[i]->render(&window);
 
-    addButton->render(&window);
     bodyInfo->render(&window);
 }
 
@@ -292,6 +246,5 @@ SimulationWindow::~SimulationWindow()
 {
     for(Body* body: simulation.getPlanets())
         delete body;
-    delete addButton;
     delete bodyInfo;
 }

@@ -45,7 +45,7 @@ private:
     void captureBody(Body*);
     void releaseBody();
 public:
-    SimulationWindow();
+    SimulationWindow(int, char*[]);
     void runSimulation();
     void listenEvents();
     void update(sf::Vector2i mousePosition);

@@ -1,4 +1,4 @@
-project(universesim)
+project(nbodysim)
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -13,6 +13,4 @@ find_package(SFML 2 REQUIRED system window graphics network audio)
 
 include_directories(${SFML_INCLUDE_DIR})
 
-# add_library(lib ${HEADERS} ${SOURCES})
-# target_link_libraries(${PROJECT_NAME} lib)
 target_link_libraries(${PROJECT_NAME} ${SFML_LIBRARIES})

@@ -8,10 +8,11 @@
 #include "math.h"
 #include "button.h"
 #include "text_panel.h"
+#include "yaml/Yaml.hpp"
 
-int main()
-{ 
-    SimulationWindow simualtion;
+int main(int argc, char *argv[])
+{     
+    SimulationWindow simualtion(argc, argv);
     simualtion.runSimulation();
     return 0;
 }

@@ -9,7 +9,7 @@ class Simulation
 private:
     std::vector<Body*> planets;
     double getDistance(Body&, Body&);
-    const float GRAVITY_CONSTANT = 10e-4;
+    const float GRAVITY_CONSTANT = 10e-5;
 public:
     Simulation();
     void addPlanet(Body*);

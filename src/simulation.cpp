@@ -5,16 +5,6 @@
 
 Simulation::Simulation()
 {
-    Body* planet1 = new Body(20000, 15, ACTIVE);
-    planet1->moveTo(350, 350);
-    // planet1->setSpeed(sf::Vector2f(0, -0.01));
-
-    Body* planet2 = new Body(200, 15, ACTIVE);
-    planet2->moveTo(350, 250);
-    planet2->setSpeed(sf::Vector2f(sqrt(2 * GRAVITY_CONSTANT * planet1->getMass() / 100.0 / 1.5) , 0));
-    
-    // planets.push_back(planet1);
-    // planets.push_back(planet2);
 };
 
 void Simulation::addPlanet(Body* body)

@@ -4,23 +4,46 @@
 #include "button.h"
 #include "math.h"
 #include "graphic_primitives.h"
+#include "config_parser.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <stdexcept>
 
-SimulationWindow::SimulationWindow()
+SimulationWindow::SimulationWindow(int argc, char* argv[])
 {
-    window.create(sf::VideoMode(960, 680), "UniverseSim");
+    window.create(sf::VideoMode(960, 680), "UniverseSim", sf::Style::Close);
 
     sf::Font *font = new sf::Font();
     initFont(font);
 
     bodyInfo = new TextPanel(sf::Vector2f(window.getSize().x - 90, 10), sf::Vector2f(80, 30), "", font, 12, sf::Color::White, TextHorizontalAlign::LEFT);
-
     state = DEFAULT;
-
     capturedBody = nullptr;
+
+    if(argc > 1)
+    {
+        char* filename = argv[1];
+        std::fstream configFile(filename);
+        if(configFile.good())
+        {
+            configFile.close();
+            ConfigParser parser(filename);
+            std::vector<BodyData> bodiesData = parser.Parse();
+            for(BodyData data: bodiesData)
+            {
+                Body* newPlanet = new Body(data.mass, data.radius, ACTIVE);
+                newPlanet->moveTo(data.position.x, data.position.y);
+                newPlanet->setSpeed(sf::Vector2f(data.speed.x, data.speed.y));
+                simulation.addPlanet(newPlanet);
+            }
+        }
+        else
+        {
+            std::cout << "Can't open config file!" << std::endl;
+        }
+    }
 }
 
 void SimulationWindow::runSimulation()

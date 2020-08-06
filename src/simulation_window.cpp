@@ -11,7 +11,7 @@
 #include <cmath>
 #include <stdexcept>
 
-SimulationWindow::SimulationWindow(int argc, char* argv[])
+SimulationWindow::SimulationWindow(int argc, char *argv[])
 {
     window.create(sf::VideoMode(960, 680), "UniverseSim", sf::Style::Close);
 
@@ -22,18 +22,18 @@ SimulationWindow::SimulationWindow(int argc, char* argv[])
     state = DEFAULT;
     capturedBody = nullptr;
 
-    if(argc > 1)
+    if (argc > 1)
     {
-        char* filename = argv[1];
+        char *filename = argv[1];
         std::fstream configFile(filename);
-        if(configFile.good())
+        if (configFile.good())
         {
             configFile.close();
             ConfigParser parser(filename);
             std::vector<BodyData> bodiesData = parser.Parse();
-            for(BodyData data: bodiesData)
+            for (BodyData data : bodiesData)
             {
-                Body* newPlanet = new Body(data.mass, data.radius, ACTIVE);
+                Body *newPlanet = new Body(data.mass, data.radius, ACTIVE);
                 newPlanet->moveTo(data.position.x, data.position.y);
                 newPlanet->setSpeed(sf::Vector2f(data.speed.x, data.speed.y));
                 simulation.addPlanet(newPlanet);
@@ -50,6 +50,7 @@ void SimulationWindow::runSimulation()
 {
     while (window.isOpen())
     {
+        clock.restart();
         listenEvents();
         window.clear();
 
@@ -57,6 +58,7 @@ void SimulationWindow::runSimulation()
         render();
 
         window.display();
+        std::cout << 1.0f / clock.getElapsedTime().asSeconds() << std::endl;
     }
 }
 
@@ -71,7 +73,7 @@ void SimulationWindow::listenEvents()
             window.close();
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
         {
-            if(state == ADD_PLANET)
+            if (state == ADD_PLANET)
             {
                 simulation.removePlanet(capturedBody);
                 state = DEFAULT;
@@ -79,21 +81,21 @@ void SimulationWindow::listenEvents()
             if (state != ADD_PLANET)
                 releaseBody();
         }
-        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A)
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A)
         {
             if (state == DEFAULT)
+            {
+                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                if (capturedBody == nullptr)
                 {
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window); 
-                    if(capturedBody == nullptr)
-                    {
-                        state = ADD_PLANET;
-                        Body *newPlanet = new Body(100, 20);
-                        newPlanet->setState(NEW);
-                        capturedBody = newPlanet;
-                        newPlanet->moveTo(sf::Vector2f(mousePosition));
-                        simulation.addPlanet(newPlanet);
-                    }
+                    state = ADD_PLANET;
+                    Body *newPlanet = new Body(100, 20);
+                    newPlanet->setState(NEW);
+                    capturedBody = newPlanet;
+                    newPlanet->moveTo(sf::Vector2f(mousePosition));
+                    simulation.addPlanet(newPlanet);
                 }
+            }
         }
 
         if (event.type == sf::Event::MouseWheelScrolled)
@@ -125,24 +127,12 @@ void SimulationWindow::listenEvents()
 
             if (event.mouseButton.button == sf::Mouse::Button::Left)
             {
-                if(capturedBody == nullptr)
-                    for (Body *body : simulation.getPlanets())
-                        if (body->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-                        {
-                            releaseBody();
-                            captureBody(body);
-                            break;
-                        }
             }
         }
 
         if (event.type == sf::Event::MouseButtonReleased)
         {
             sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-
-            if(capturedBody != nullptr)
-                if(!capturedBody->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y) && state != ADD_PLANET)
-                    releaseBody();
 
             if (dragAndDrop.mouseButton == event.mouseButton.button)
             {
@@ -173,7 +163,7 @@ void SimulationWindow::listenEvents()
                                 if (capturedBody->isCollided(*body))
                                     canAddBody = false;
 
-                        if (canAddBody && state == ADD_PLANET)
+                        if (canAddBody && state == ADD_PLANET || state == DEFAULT)
                         {
                             capturedBody->accelerate(acceleration);
                             releaseBody();
@@ -181,7 +171,18 @@ void SimulationWindow::listenEvents()
                         }
                     }
                 }
-
+                else
+                {
+                    if (event.mouseButton.button == sf::Mouse::Button::Left)
+                        if (capturedBody == nullptr)
+                            for (Body *body : simulation.getPlanets())
+                                if (body->getShape()->getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+                                {
+                                    releaseBody();
+                                    captureBody(body);
+                                    break;
+                                }
+                }
                 dragAndDrop.reset();
             }
         }
@@ -195,25 +196,23 @@ void SimulationWindow::update(sf::Vector2i mousePosition)
         selectedBody = nullptr;
 
     simulation.processSystem();
-    
-    for(int i = 0; i < planets.size(); i++)
+
+    for (int i = 0; i < planets.size(); i++)
         if (planets[i]->getShape()->getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
         {
             selectedBody = planets[i];
         }
 
-
     if (selectedBody != nullptr)
     {
-        bodyInfo->update("Radius: " + std::to_string(int(selectedBody->getRadius())) + '\n' 
-                        + "Mass: " + std::to_string(int(selectedBody->getMass())));
+        bodyInfo->update("Radius: " + std::to_string(int(selectedBody->getRadius())) + '\n' + "Mass: " + std::to_string(int(selectedBody->getMass())));
     }
     else
         bodyInfo->update("");
 
     if (capturedBody != nullptr)
         if (capturedBody->getState() == NEW)
-            if(!dragAndDrop.active)
+            if (!dragAndDrop.active)
                 capturedBody->moveTo(sf::Vector2f(mousePosition));
 }
 
@@ -267,7 +266,7 @@ void SimulationWindow::releaseBody()
 
 SimulationWindow::~SimulationWindow()
 {
-    for(Body* body: simulation.getPlanets())
+    for (Body *body : simulation.getPlanets())
         delete body;
     delete bodyInfo;
 }

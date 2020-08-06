@@ -41,6 +41,7 @@ private:
     void initFont(sf::Font* font);
     SimulationWindowState state;
     DragAndDropData dragAndDrop;
+    sf::Clock clock;
     bool intersect(const sf::RectangleShape&, const sf::CircleShape&);
     void captureBody(Body*);
     void releaseBody();

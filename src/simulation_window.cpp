@@ -67,33 +67,54 @@ void SimulationWindow::listenEvents()
     {
         if (event.type == sf::Event::Closed)
             window.close();
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q)
-            window.close();
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+        if (event.type == sf::Event::KeyPressed)
         {
-            if (state == ADD_PLANET)
+            if (event.key.code == sf::Keyboard::Q)
+                window.close();
+
+            if (event.key.code == sf::Keyboard::Escape)
             {
-                simulation.removePlanet(capturedBody);
-                state = DEFAULT;
-            }
-            if (state != ADD_PLANET)
-                releaseBody();
-        }
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A)
-        {
-            if (state == DEFAULT)
-            {
-                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                if (capturedBody == nullptr)
+                if (state == ADD_PLANET)
                 {
-                    state = ADD_PLANET;
-                    Body *newPlanet = new Body(100, 20);
-                    newPlanet->setState(NEW);
-                    capturedBody = newPlanet;
-                    newPlanet->moveTo(sf::Vector2f(mousePosition));
-                    simulation.addPlanet(newPlanet);
+                    simulation.removePlanet(capturedBody);
+                    state = DEFAULT;
+                }
+                if (state != ADD_PLANET)
+                    releaseBody();
+            }
+
+            if (event.key.code == sf::Keyboard::A)
+            {
+                if (state == DEFAULT)
+                {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    if (capturedBody == nullptr)
+                    {
+                        state = ADD_PLANET;
+                        Body *newPlanet = new Body(100, 20);
+                        newPlanet->setState(NEW);
+                        capturedBody = newPlanet;
+                        newPlanet->moveTo(sf::Vector2f(mousePosition));
+                        simulation.addPlanet(newPlanet);
+                    }
                 }
             }
+
+            if (event.key.code == sf::Keyboard::Left)
+                for(Body* body: simulation.getPlanets())
+                    body->moveTo(body->getPosition().x + 3, body->getPosition().y);
+            
+            if (event.key.code == sf::Keyboard::Right)
+                for(Body* body: simulation.getPlanets())
+                    body->moveTo(body->getPosition().x - 3, body->getPosition().y);
+            
+            if (event.key.code == sf::Keyboard::Down)
+                for(Body* body: simulation.getPlanets())
+                    body->moveTo(body->getPosition().x, body->getPosition().y - 3);
+            
+            if (event.key.code == sf::Keyboard::Up)
+                for(Body* body: simulation.getPlanets())
+                    body->moveTo(body->getPosition().x, body->getPosition().y + 3);
         }
 
         if (event.type == sf::Event::MouseWheelScrolled)

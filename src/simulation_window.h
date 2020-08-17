@@ -44,6 +44,8 @@ private:
     bool intersect(const sf::RectangleShape&, const sf::CircleShape&);
     void captureBody(Body*);
     void releaseBody();
+    sf::Clock clock;
+    int FPS = 45;
 public:
     SimulationWindow(int, char*[]);
     void runSimulation();

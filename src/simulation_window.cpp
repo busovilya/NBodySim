@@ -50,6 +50,7 @@ void SimulationWindow::runSimulation()
 {
     while (window.isOpen())
     {
+        clock.restart();
         listenEvents();
         window.clear();
 
@@ -57,6 +58,11 @@ void SimulationWindow::runSimulation()
         render();
 
         window.display();
+
+        auto elapsed_time = clock.getElapsedTime().asMilliseconds();
+        if(elapsed_time < 1000.0 / FPS)
+            sf::sleep(sf::Time(sf::milliseconds(1000.0 / FPS - elapsed_time)));
+        std::cout << 1.0 / clock.getElapsedTime().asSeconds() << std::endl;
     }
 }
 

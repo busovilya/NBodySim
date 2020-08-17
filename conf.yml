@@ -1,0 +1,18 @@
+- planet1:
+  radius: 20
+  mass: 20000
+  position:
+    x: 400
+    y: 320
+  speed:
+    x: 0
+    y: 0
+- planet2:
+  radius: 7
+  mass: 10
+  position:
+    x: 100
+    y: 320
+  speed:
+    x: 0
+    y: -7.0
